@@ -1,0 +1,173 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define QUANTIDADE_DE_PROCESSOS 6
+
+struct Fila {
+	int capacidade;
+	int *dados;
+	int primeiro;
+	int ultimo;
+	int nItens; 
+	int *tempo;
+};
+int cont=0;
+void criarFila( struct Fila *f, int c ) { 
+	f->capacidade = c;
+	f->dados = (int*) malloc (f->capacidade * sizeof(int));
+	f->tempo = (int*) malloc (f->capacidade * sizeof(int));
+	f->primeiro = 0;
+	f->ultimo = -1;
+	f->nItens = 0;	
+}
+
+void inserir(struct Fila *f, int v,int temp) {
+
+	if(f->ultimo == f->capacidade-1)
+		f->ultimo = -1;
+
+	f->ultimo++;
+	f->dados[f->ultimo] = v; // incrementa ultimo e insere	
+	f->tempo[f->ultimo] = temp; // incrementa ultimo e insere
+	f->nItens++; // mais um item inserido
+
+}
+
+int remover( struct Fila *f ) { // pega o item do comeÃ§o da fila
+	
+	int date = f->dados[f->primeiro]; // pega o valor e incrementa o primeiro
+	int temp = f->tempo[f->primeiro]; // pega o tempo e incrementa o primeiro
+	f->primeiro++;
+
+	if(f->primeiro == f->capacidade)
+		f->primeiro = 0;
+	printf("Processo : %d\n", date);
+	printf("Entrando no tempo: %d\n", cont);
+	cont = cont + temp;
+	while(temp != 0){
+		printf("%d\n", temp );
+		temp--;
+	}
+	f->nItens--;  // um item retirado
+	return date;
+
+}
+
+int estaVazia( struct Fila *f ) { // retorna verdadeiro se a fila estÃ¡ vazia
+
+	return (f->nItens==0);
+
+}
+
+int estaCheia( struct Fila *f ) { // retorna verdadeiro se a fila estÃ¡ cheia
+
+	return (f->nItens == f->capacidade);
+}
+
+void mostrarFila(struct Fila *f){
+
+	int cont, i;
+
+	for ( int j=0,cont=0, i= f->primeiro; cont < f->nItens; cont++){
+		printf("\n");
+
+		printf("%d ",f->dados[i++]);
+		printf("%d ", f->tempo[j++] );
+		if (i == f->capacidade)
+			i=0;
+
+	}
+	printf("\n\n");
+
+}
+
+void ordenarVetor(int vetor[], int n, int vetorTempoNecessario[]){
+	int i,j,aux,aux2;
+
+	for(i=0;i<n;i++)
+	 { 
+	    for(j=i+1;j<n;j++)
+	    {
+	     if (vetor[i] > vetor[j])
+	     {
+	     	aux2= vetorTempoNecessario[i];
+	        aux = vetor[i];
+	        vetorTempoNecessario[i] = vetorTempoNecessario[j];
+	        vetor[i] = vetor[j];
+	        vetorTempoNecessario[j] = aux2;
+	        vetor[j] = aux;	     
+	     }
+	        		 
+	    }
+	}
+}
+
+void main () {
+
+	int capacidade,TEMPO_TOTAL=0;
+	int processo;
+	struct Fila fila;
+
+	int tempo_de_chegada[QUANTIDADE_DE_PROCESSOS] = {5, 4, 3, 2, 1, 0};
+	//int linha_do_tempo[TEMPO_TOTAL];
+	int tempo_necessario[QUANTIDADE_DE_PROCESSOS] = {1, 10, 20, 30, 40, 50}; 
+	int tempo_restante[QUANTIDADE_DE_PROCESSOS] = {1, 10, 20, 30, 40, 50};	
+
+	// cria a fila	
+	criarFila(&fila, QUANTIDADE_DE_PROCESSOS);
+	
+				if (estaCheia(&fila)){
+					printf("\nFila Cheia!!!\n\n");
+				}
+				else {
+					printf("processos chegando\n");
+					for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+						printf("%d ", tempo_de_chegada[i] );	
+					}
+
+					printf("\ntempo necessario\n");
+					for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+						printf("%d ", tempo_necessario[i] );						
+					}	
+
+					ordenarVetor(tempo_de_chegada,QUANTIDADE_DE_PROCESSOS,tempo_necessario);
+
+					for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+						inserir(&fila,tempo_de_chegada[i],tempo_necessario[i]);	
+				}
+
+				printf("\ntempo de chegada dos processos ordenados\n");
+					for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+						printf("%d ", tempo_de_chegada[i] );	
+					}
+
+				printf("\ntempo necessario\n");
+					for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+						printf("%d ", tempo_necessario[i] );
+						TEMPO_TOTAL = TEMPO_TOTAL + tempo_necessario[i];
+					}	
+				}
+
+				if (estaVazia(&fila)){
+					printf("\nFila vazia!!!\n\n");
+				}
+				else {
+					printf("\n");
+					printf("Conteudo da fila: ");
+					mostrarFila(&fila);
+				}
+
+				if (estaVazia(&fila)){
+					printf("\nFila vazia!!!\n\n");
+				}
+
+				else {
+					for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+					processo = remover(&fila);
+					printf("\n%d removido com sucesso\n\n", processo) ;
+					} 
+					printf("tempo total de todos os processos: %d\n", TEMPO_TOTAL);
+				}
+
+	
+}
