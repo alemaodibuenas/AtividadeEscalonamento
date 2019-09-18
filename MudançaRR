@@ -1,0 +1,204 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define QUANTIDADE_DE_PROCESSOS 7
+
+
+struct Fila {
+	int capacidade;
+	int tempo;
+	int dados;
+	int restante;
+	int primeiro;
+	int ultimo;
+	int nItens; 
+	struct Fila *prox;	
+};
+
+int contador = 0,percorre=0;//contadores do  fcfs
+
+
+struct Fila *init_processos ( int v,int temp,int rest) {
+    struct Fila *proc;
+    proc = (struct Fila*)malloc(sizeof(struct Fila)); 
+  if (proc == NULL) {
+        printf("Erro Fatal: Falha Alocacao de memoria.\nFinalizar.\n");
+        exit(1);
+    };
+    proc->id = id;
+    proc->surto = surto;
+    proc->prioridade = prioridade;
+    proc->execucao = 0;
+    proc->espera = 0;
+    proc->prox = NULL;
+    return(proc);
+};
+
+
+
+
+
+void inserir(struct Fila *f, int v,int temp,int rest) {
+
+	f->ultimo++;
+	f->dados[f->ultimo] = v; // incrementa ultimo e insere	
+	f->tempo[f->ultimo] = temp; // incrementa ultimo e insere
+	f->restante[f->ultimo] = rest;// tempo de um processo
+	f->nItens++; // mais um item inserido
+
+
+	struct processos *plist, *ptmp;
+    plist       = init_processos(1, 10, 3);
+    plist->prox = init_processos(2,  1, 1);
+    ptmp = plist->prox;
+    ptmp->prox  = init_processos(3,  2, 3);
+    ptmp = ptmp->prox;
+    ptmp->prox  = init_processos(4,  1, 4);
+    ptmp = ptmp->prox;
+    ptmp->prox  = init_processos(5,  5, 2);
+}
+
+int fcfs( struct Fila *f ) { // pega o item do comeÃ§o da fila
+	
+	int date = f->dados[f->primeiro]; // pega o valor 
+	int temp = f->tempo[f->primeiro]; // pega o tempo  
+	f->primeiro++;//incrementa o primeiro
+
+	printf("processo: %d\n", date );
+	printf("Tempo de espera: %d\n", percorre);
+	printf("Tempo a ser consumido: %d\n", temp );
+
+	contador = contador + temp;
+
+	while(percorre < contador){
+		printf("Linha do tempo: %d\n", percorre );
+		percorre++;
+	}
+
+	f->nItens--;  // um item retirado
+	return date;
+}
+
+
+int rr( struct Fila *f ,int quantun){
+
+	int date = f->dados[f->primeiro]; // pega o valor 
+	int temp = f->tempo[f->primeiro]; // pega o tempo 
+	int rest = f->restante[f->primeiro]; 
+	f->primeiro++;//incrementa o primeiro
+
+
+
+}
+
+
+int estaVazia( struct Fila *f ) { // retorna verdadeiro se a fila estÃ¡ vazia
+	return (f->nItens==0);
+}
+
+int estaCheia( struct Fila *f ) { // retorna verdadeiro se a fila estÃ¡ cheia
+	return (f->nItens == f->capacidade);
+}
+
+void mostrarFila(struct Fila *f){
+
+	int cont, i;
+
+	for ( int j=0,cont=0, i= f->primeiro; cont < f->nItens; cont++){		
+		printf("\n");
+		printf("%d ",f->dados[i++]);
+		printf("%d ", f->tempo[j++] );	
+	}
+	printf("\n\n");
+
+}
+
+void ordenarVetor(int vetor[], int n, int vetorTempoNecessario[], int vetorTempoRestante[]){
+	int aux,aux2,aux3;
+
+	for(int i=0;i<n;i++)
+	 { 
+	    for(int j=i+1;j<n;j++)
+	    {
+	     if (vetor[i] > vetor[j])
+	     {
+	     	aux3 = vetorTempoRestante[i];
+	     	aux2 = vetorTempoNecessario[i];
+	        aux = vetor[i];
+
+	        vetorTempoRestante[i] = vetorTempoRestante[j];
+	        vetorTempoNecessario[i] = vetorTempoNecessario[j];
+	        vetor[i] = vetor[j];
+
+	        vetorTempoRestante[j] = aux3;
+	        vetorTempoNecessario[j] = aux2;
+	        vetor[j] = aux;	     
+	     }	        		 
+	    }
+	}
+}
+
+void main () {
+
+	int TEMPO_TOTAL=0;
+	int processo;
+	struct Fila fila;
+
+	int tempo_de_chegada[QUANTIDADE_DE_PROCESSOS] = {5, 4, 3, 2, 1, 0, 6};	
+	int tempo_necessario[QUANTIDADE_DE_PROCESSOS] = {1, 10, 20, 30, 40, 50, 15}; 
+	int tempo_restante[QUANTIDADE_DE_PROCESSOS] = {1, 10, 20, 30, 40, 50, 15};	
+
+	// cria a fila	
+	criarFila(&fila, QUANTIDADE_DE_PROCESSOS);	
+
+		if (estaCheia(&fila)){
+			printf("\nFila Cheia!!!\n\n");
+		}		
+		else {
+				printf("processos chegando\n");
+				for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+					printf("%d ", tempo_de_chegada[i] );	
+				}
+
+				printf("\ntempo necessario\n");
+				for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+					printf("%d ", tempo_necessario[i] );						
+				}	
+
+				ordenarVetor(tempo_de_chegada,QUANTIDADE_DE_PROCESSOS,tempo_necessario,tempo_restante);
+
+					
+				for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+					inserir(&fila,tempo_de_chegada[i],tempo_necessario[i],tempo_restante[i]);	
+				}
+
+				printf("\ntempo de chegada dos processos ordenados\n");
+					for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+						printf("%d ", tempo_de_chegada[i] );	
+					}
+
+				printf("\ntempo necessario\n");
+					for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+						printf("%d ", tempo_necessario[i] );
+						TEMPO_TOTAL = TEMPO_TOTAL + tempo_necessario[i];
+					}	
+				
+
+				printf("\n");
+				printf("Conteudo da fila: ");
+				mostrarFila(&fila);
+				
+
+				for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+					processo = fcfs(&fila);
+					printf("%d processo encerrado!\n\n", processo) ;
+				} 
+				int quantun=3;
+				for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+					processo = rr(&fila, quantun);
+					printf("%d processo encerrado!\n\n", processo) ;
+				}
+				
+				printf("tempo total de todos os processos: %d\n", TEMPO_TOTAL);				
+			}
+}
