@@ -1,0 +1,167 @@
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <locale.h>
+#include <semaphore.h>
+
+#define TAM_MATRIZ	5
+#define NUM_THREADS	25
+
+int matriz_x[TAM_MATRIZ][TAM_MATRIZ];
+int matriz_y[TAM_MATRIZ][TAM_MATRIZ];
+
+sem_t mutex;
+sem_t empty;
+sem_t full;
+
+typedef struct cel{
+    int i;
+    int j;
+}celula;
+
+int cont;
+
+void *coloniza(void* parametro);
+void *imprimi(void* parametro);
+void *colonizaX(void* parametro);
+
+void *primeirocaso(void* parametro);
+void *segundocaso(void* parametro);
+void *terceirocaso(void* parametro);
+void *quartocaso(void* parametro);
+
+
+void *primeirocaso(void* parametro){
+
+	printf("estou aqui primeiro caso\n");
+
+	sem_wait(&mutex);
+	sem_wait(&empty);
+	
+	matriz_x[0][cont++] = rand() % 100/cont;
+
+	sem_post(&full);
+	sem_post(&mutex);
+}
+
+void *segundocaso(void* parametro){
+
+	printf("estou aqui segundocaso caso\n");
+	
+	sem_wait(&mutex);
+	sem_wait(&empty);
+	
+	//X[i][j] = max(X[i−1][j−1], X[i−1][j], X[i−1][j+ 1]) +Y[i][j];
+	//matriz_x[t->i][t->j]= matriz_y[t->i][t->j];
+
+	sem_post(&full);
+	sem_post(&mutex);
+}
+
+void *terceirocaso(void* parametro){
+
+	printf("estou aqui terceirocaso caso\n");
+
+}
+
+void *quartocaso(void* parametro){
+
+	printf("estou aqui quartocaso caso\n");
+
+	sem_wait(&mutex);
+	sem_wait(&empty);
+	
+	//X[i][j] =X[i−1][j] +Y[i][j]
+
+	sem_post(&full);
+	sem_post(&mutex);
+}
+
+
+void *coloniza(void* parametro){
+
+	printf("colonizando o Y\n");
+
+	sem_wait(&mutex);
+	sem_wait(&empty);
+	for(int i=0;i<TAM_MATRIZ;i++){
+			for(int j=0;j<TAM_MATRIZ;j++){			
+				matriz_y[i][j]= rand() % 25;				
+				printf("matriz_y[%d][%d] = %d\n",i,j,matriz_y[i][j]);			
+			}
+		}
+	sem_post(&full);
+	sem_post(&mutex);
+}
+
+void *colonizaX(void* parametro){
+
+	pthread_t teste1,teste2,teste3,teste4;
+
+	for( int i=0;i<TAM_MATRIZ;i++){
+			for(int j=0;j<TAM_MATRIZ;j++){	
+
+				if(i == 0){
+					pthread_create(&teste1, NULL, primeirocaso, (void*)&j);	
+				}
+
+				if(i> 0 and j>0 and j < TAM_MATRIZ - 1){
+					pthread_create(&teste2, NULL, segundocaso, NULL);
+				}
+
+				if(i > 0 and j == 0){
+					pthread_create(&teste3, NULL, terceirocaso, NULL);
+				}
+
+				if(i > 0 and j == TAM_MATRIZ - 1){
+					pthread_create(&teste4, NULL, quartocaso, NULL);
+				}									
+			}
+		}
+
+	pthread_join(teste1, NULL);	
+	pthread_join(teste2, NULL);
+	pthread_join(teste3, NULL);
+	pthread_join(teste4, NULL);
+}
+
+void *imprimi(void* parametro){
+
+	for(int i=0;i<TAM_MATRIZ;i++){
+			for(int j=0;j<TAM_MATRIZ;j++){
+				printf("matriz_x[%d][%d] = %d\n",i,j,matriz_x[i][j]);
+			}
+		}
+}
+
+
+int main(int argc, char const *argv[])
+{
+	setlocale(LC_ALL,"Portuguese");
+
+	pthread_t thread_Matriz_Y;
+	pthread_t thread_Matriz_X;	
+	pthread_t impressao;
+
+	sem_init(&mutex, 0, 1);
+	sem_init(&empty, 0, NUM_THREADS);
+	sem_init(&full, 0, 0);
+
+	pthread_create(&thread_Matriz_Y, NULL, coloniza, NULL);	
+	
+
+	pthread_create(&thread_Matriz_X, NULL, colonizaX, NULL);
+	printf("parte do X\n");
+
+	pthread_join(thread_Matriz_Y, NULL);//encerra a matriz_y
+	pthread_join(thread_Matriz_X, NULL);//encerra a matriz_x	
+
+	pthread_create(&impressao, NULL, imprimi, NULL);
+	pthread_join(impressao, NULL);
+
+	printf("acabou as thread\n");	
+
+	pthread_exit(NULL);
+
+	return 0;
+}
