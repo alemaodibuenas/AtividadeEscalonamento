@@ -111,57 +111,43 @@ void main () {
 					printf("\nFila Cheia!!!\n\n");
 				}
 				else {
-				printf("processos chegando\n");
-					for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
-						printf("%d ", tempo_de_chegada[i] );	
-					}
+					printf("processos chegando\n");
+						for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+							printf("%d ", tempo_de_chegada[i] );	
+							}
 
-				printf("\ntempo necessario\n");
-					for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
-						printf("%d ", tempo_necessario[i] );						
-					}	
+					printf("\ntempo necessario\n");
+						for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+							printf("%d ", tempo_necessario[i] );						
+							}	
 
 					ordenarVetor(tempo_de_chegada,QUANTIDADE_DE_PROCESSOS,tempo_necessario);
 
 					for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
 						inserir(&fila,tempo_de_chegada[i],tempo_necessario[i]);	
-				}
+						}
 
-				printf("\ntempo de chegada dos processos ordenados\n");
-					for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
-						printf("%d ", tempo_de_chegada[i] );	
-					}
+					printf("\ntempo de chegada dos processos ordenados\n");
+						for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+							printf("%d ", tempo_de_chegada[i] );	
+							}
 
-				printf("\ntempo necessario\n");
-					for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
-						printf("%d ", tempo_necessario[i] );
-						TEMPO_TOTAL = TEMPO_TOTAL + tempo_necessario[i];
-					}	
-				}
+					printf("\ntempo necessario\n");
+						for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
+							printf("%d ", tempo_necessario[i] );
+							TEMPO_TOTAL = TEMPO_TOTAL + tempo_necessario[i];
+							}					
 
-				if (estaVazia(&fila)){
-					printf("\nFila vazia!!!\n\n");
-				}
-				else {
 					printf("\n");
 					printf("Conteudo da fila: ");
 					mostrarFila(&fila);
-				}
 
-				if (estaVazia(&fila)){
-					printf("\nFila vazia!!!\n\n");
-				}
-
-				else {
 					for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
-					processo = remover(&fila);
-					printf("%d processo encerrado!\n\n", processo) ;
-					} 
+						processo = remover(&fila);
+						printf("%d processo encerrado!\n\n", processo) ;
+						} 
+				
 					printf("tempo total de todos os processos: %d\n", TEMPO_TOTAL);
+				
 				}
-
-				if (estaVazia(&fila)){
-					printf("\nFila vazia!!!\n\n");
-				}
-
 }
