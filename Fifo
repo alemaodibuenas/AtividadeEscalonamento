@@ -107,10 +107,6 @@ void main () {
 	// cria a fila	
 	criarFila(&fila, QUANTIDADE_DE_PROCESSOS);
 	
-				if (estaCheia(&fila)){
-					printf("\nFila Cheia!!!\n\n");
-				}
-				else {
 					printf("processos chegando\n");
 						for(int i=0;i<QUANTIDADE_DE_PROCESSOS;i++){
 							printf("%d ", tempo_de_chegada[i] );	
@@ -149,5 +145,5 @@ void main () {
 				
 					printf("tempo total de todos os processos: %d\n", TEMPO_TOTAL);
 				
-				}
+				
 }
